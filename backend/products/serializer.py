@@ -1,0 +1,14 @@
+from .models import Category, Product
+from rest_framework import serializers
+
+
+class CategorySerializer(serializers.Serializer):
+    model = Category
+    fields = ['id', 'name', 'created_at', 'modified_at']
+    read_only = ['created_at', 'modified_at']
+
+
+class ProductSerializer(serializers.Serializer):
+    model = Product
+    fields = ['id', 'name', 'decription', 'price', 'quantity', 'category','created_at', 'modified_at']
+    read_only = ['created_at', 'modified_at']
