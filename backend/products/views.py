@@ -1,6 +1,6 @@
 from .models import Category, Product
 from rest_framework import viewsets
-from .serializer import CategorySerializer, ProductSerializer
+from .serializers import CategorySerializer, ProductSerializer
 
 # Create your views here.
 class CategoryViewset(viewsets.ModelViewSet):

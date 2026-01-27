@@ -32,7 +32,7 @@ class Product(models.Model):
                               default='products/default.jpg')
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    stock = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     category =  models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

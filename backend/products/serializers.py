@@ -14,11 +14,11 @@ class ProductSerializer(serializers.ModelSerializer):
     # Override price and quantity in models with custom messages
     price = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0.01'),
                                      error_messages = {'min_value': 'Price must be atleast Ksh 0.01'})
-    quantity = serializers.IntegerField(min_value=1, error_messages = {'min_value': 'Quantity must be at least 1'})
+    stock = serializers.IntegerField(min_value=1, error_messages = {'min_value': 'Stock must be at least 1'})
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'image', 'description', 'price', 'quantity', 'category', 'gender', 'created_at', 'modified_at']
+        fields = ['id', 'name', 'image', 'description', 'price', 'stock', 'category', 'gender', 'created_at', 'modified_at']
         read_only_fields = ['id', 'created_at', 'modified_at']
 
     # The below is not necessary:
