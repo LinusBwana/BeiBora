@@ -18,6 +18,9 @@ class Cart(models.Model):
     def total_price(self):
         return sum(item.subtotal for item in self.items.all())
     
+    class Meta:
+        ordering = ['-created_at']
+    
 
 class CartItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -32,3 +35,4 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = ['cart', 'product']
+        ordering = ['-created_at']
