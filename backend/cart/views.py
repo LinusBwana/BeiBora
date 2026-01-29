@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from .models import Cart, CartItem
-from .serializers import CartSerializer, CartItemSerializer
+from .serializers import CartSerializer, CartItemSerializer, AddToCartSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -25,42 +25,43 @@ class CartViewset(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['post'])
     def add_item(self, request):
-        """Add item to cart"""
-        from products.models import Product
-        product_id = request.data.get('product_id')
-        quantity = int(request.data.get('quantity', 1))
+        """Add item to cart - with serializer validation"""
+        # Use the AddToCartSerializer for validation
+        serializer = AddToCartSerializer(data=request.data)
+        
+        # Validate - this automatically checks stock!
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            product = Product.objects.get(id=product_id)
+        # Get validated data
+        validated_data = serializer.validated_data
+        product = validated_data['product']  # Already fetched in validation
+        quantity = validated_data['quantity']
 
-            # Validate stock
-            if product.stock < quantity:
+       # Get or create cart
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        
+        # Add or update cart item
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+        
+        if not created:
+            # Check if adding more would exceed stock
+            new_quantity = cart_item.quantity + quantity
+            if product.stock < new_quantity:
                 return Response(
-                    {'error': 'Insufficient stock'},
-                     status=status.HTTP_400_BAD_REQUEST
+                    {'error': f'Cannot add {quantity} more. Only {product.stock - cart_item.quantity} available.'},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
-            
-            # Get or create cart
-            cart, _ = Cart.objects.get_or_create(user=self.request.user)
-
-            cart_item, created = CartItem.objects.get_or_create(
-                cart=cart,
-                product=product,
-                defaults={'quantity': quantity}
-            )
-
-            if not created:
-                cart_item.quantity += quantity
-                cart_item.save()
-
-            serializer = CartSerializer(cart)
-            return Response(serializer.data)
-
-        except Product.DoesNotExist:
-            return Response(
-                {'error': 'Product not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            cart_item.quantity = new_quantity
+            cart_item.save()
+        
+        # Return updated cart
+        cart_serializer = CartSerializer(cart)
+        return Response(cart_serializer.data, status=status.HTTP_201_CREATED) 
 
 
     @action(detail=False, methods=['post'])
