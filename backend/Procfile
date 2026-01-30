@@ -1,1 +1,2 @@
-web: gunicorn beibora.wsgi --log-file -
+release: python manage.py collectstatic --noinput
+web: gunicorn beibora.wsgi:application --bind 0.0.0.0:$PORT --log-file -

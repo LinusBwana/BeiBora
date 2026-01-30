@@ -77,6 +77,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True  # If using authentication
 
+
 ROOT_URLCONF = 'beibora.urls'
 
 TEMPLATES = [
@@ -173,7 +174,6 @@ SWAGGER_SETTINGS = {
         #     'in': 'header',
         #     'description': 'Token-based authentication.'
         # },
-        
         # Session Authentication
         'Session': {
             'type': 'apiKey',
@@ -202,4 +202,5 @@ SWAGGER_SETTINGS = {
     'REFETCH_SCHEMA_ON_LOGOUT': True,
     'DEFAULT_MODEL_RENDERING': 'model',
     'DEFAULT_MODEL_DEPTH': 2,
+    'DEFAULT_API_URL': 'https://beibora-production-465c.up.railway.app',
 }

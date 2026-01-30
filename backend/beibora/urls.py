@@ -21,8 +21,7 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
-SCHEMA_URL = 'https://beibora-production.up.railway.app' if settings.DEBUG is False else 'http://127.0.0.1:8000'
+from django.shortcuts import redirect
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -32,10 +31,16 @@ schema_view = get_schema_view(
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
-   url=SCHEMA_URL,
 )
 
+
+# Root URL redirect to API docs
+def home(request):
+    return redirect('/api/docs/')
+
+
 urlpatterns = [
+    path('', home, name='home'), 
     path('admin/', admin.site.urls),
     path('api/products/', include('products.urls')),
     path('api/cart/', include('cart.urls')),
