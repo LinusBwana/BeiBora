@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config, Csv
 import os
 import dj_database_url
+import rest_framework
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -149,6 +150,56 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
 SWAGGER_SETTINGS = {
-    'DEFAULT_API_URL': 'https://beibora-production.up.railway.app/',
+    'SECURITY_DEFINITIONS': {
+        # # JWT Authentication
+        # 'Bearer': {
+        #     'type': 'apiKey',
+        #     'name': 'Authorization',
+        #     'in': 'header',
+        #     'description': 'JWT Authorization header using the Bearer scheme.'
+        # },
+        # # Token Authentication (DRF Token)
+        # 'Token': {
+        #     'type': 'apiKey',
+        #     'name': 'Authorization',
+        #     'in': 'header',
+        #     'description': 'Token-based authentication.'
+        # },
+        
+        # Session Authentication
+        'Session': {
+            'type': 'apiKey',
+            'name': 'Session',
+            'in': 'cookie',
+            'description': 'Django session authentication'
+        },
+        # Basic Authentication
+        'Basic': {
+            'type': 'basic',
+            'description': 'Basic HTTP authentication'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    # 'LOGIN_URL': 'rest_framework:login',
+    # 'LOGOUT_URL': 'rest_framework:logout',
+    'DOC_EXPANSION': 'none',  # 'none', 'list', or 'full'
+    'APIS_SORTER': 'alpha',  # Sort endpoints alphabetically
+    'OPERATIONS_SORTER': 'alpha',  # Sort operations alphabetically
+    'JSON_EDITOR': True,
+    'SHOW_REQUEST_HEADERS': True,
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
+    'VALIDATOR_URL': None,
+    'PERSIST_AUTH': True,
+    'REFETCH_SCHEMA_WITH_AUTH': True,
+    'REFETCH_SCHEMA_ON_LOGOUT': True,
+    'DEFAULT_MODEL_RENDERING': 'model',
+    'DEFAULT_MODEL_DEPTH': 2,
 }
