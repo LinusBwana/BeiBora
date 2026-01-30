@@ -67,13 +67,18 @@ MIDDLEWARE = [
 ]
 
 # Allow frontend to access API
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React default
-    "http://localhost:5173",  # Vite default
-    "http://localhost:5174",  # Vite alternative
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://localhost:3000,http://localhost:4173',
+    cast=lambda v: [s.strip() for s in v.split(',')]
+)
+
+
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:3000,http://localhost:5173,http://localhost:4173',
+    cast=lambda v: [s.strip() for s in v.split(',')]
+)
 
 CORS_ALLOW_CREDENTIALS = True  # If using authentication
 
@@ -144,6 +149,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (uploads)
@@ -154,11 +160,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',        
     ],
 }
 
 SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
         # # JWT Authentication
         # 'Bearer': {
@@ -174,23 +181,22 @@ SWAGGER_SETTINGS = {
         #     'in': 'header',
         #     'description': 'Token-based authentication.'
         # },
-        # Session Authentication
-        'Session': {
-            'type': 'apiKey',
-            'name': 'Session',
-            'in': 'cookie',
-            'description': 'Django session authentication'
-        },
+        # # Session Authentication
+        # 'Session': {
+        #     'type': 'apiKey',
+        #     'name': 'Session',
+        #     'in': 'cookie',
+        #     'description': 'Django session authentication'
+        # },
         # Basic Authentication
         'Basic': {
             'type': 'basic',
             'description': 'Basic HTTP authentication'
         }
     },
-    'USE_SESSION_AUTH': False,
     # 'LOGIN_URL': 'rest_framework:login',
     # 'LOGOUT_URL': 'rest_framework:logout',
-    'DOC_EXPANSION': 'none',  # 'none', 'list', or 'full'
+    'DOC_EXPANSION': 'list',  # 'none', 'list', or 'full'
     'APIS_SORTER': 'alpha',  # Sort endpoints alphabetically
     'OPERATIONS_SORTER': 'alpha',  # Sort operations alphabetically
     'JSON_EDITOR': True,
@@ -202,5 +208,8 @@ SWAGGER_SETTINGS = {
     'REFETCH_SCHEMA_ON_LOGOUT': True,
     'DEFAULT_MODEL_RENDERING': 'model',
     'DEFAULT_MODEL_DEPTH': 2,
-    'DEFAULT_API_URL': 'https://beibora-production-465c.up.railway.app',
 }
+
+if not DEBUG:  # Only set in production
+    DEFAULT_API_URL = 'https://beibora-production-465c.up.railway.app'
+    SWAGGER_SETTINGS['DEFAULT_API_URL'] = DEFAULT_API_URL
