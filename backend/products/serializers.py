@@ -16,6 +16,8 @@ class ProductSerializer(serializers.ModelSerializer):
                                      error_messages = {'min_value': 'Price must be atleast Ksh 0.01'})
     stock = serializers.IntegerField(min_value=1, error_messages = {'min_value': 'Stock must be at least 1'})
 
+    category = CategorySerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = ['id', 'name', 'image', 'description', 'price', 'stock', 'category', 'gender', 'created_at', 'modified_at']
