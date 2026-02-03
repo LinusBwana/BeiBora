@@ -7,9 +7,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 // Helper to make fetch requests
 const apiRequest = async (endpoint, options = {}) => {
     const config = {
-        Headers: {
+        headers: {
             'Content-Type': 'application/json',
         },
+        ...options,
     };
 
     try {

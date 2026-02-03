@@ -56,8 +56,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'corsheaders.middleware.CorsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,14 +69,14 @@ MIDDLEWARE = [
 # Allow frontend to access API
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:5173,http://localhost:3000,http://localhost:4173',
+    default='http://localhost:5173,http://localhost:3000,http://localhost:4173,https://bei-bora.vercel.app',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost:3000,http://localhost:5173,http://localhost:4173',
+    default='http://localhost:3000,http://localhost:5173,http://localhost:4173,https://bei-bora.vercel.app',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
@@ -151,6 +151,8 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
