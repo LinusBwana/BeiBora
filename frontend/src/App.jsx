@@ -3,14 +3,22 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Navbar from './components/Navbar'
-import ProductList from './pages/ProductList'
+import Footer from './components/Footer'
+import Homepage from './pages/homepage'
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    console.log('User logged out');
+  };
   
   return (
     <div>
-      <Navbar />
-      <ProductList />
+		<Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+		<Homepage />
+      	<Footer />
     </div>
   )
 
